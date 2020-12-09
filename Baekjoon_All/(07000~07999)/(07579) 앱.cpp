@@ -2,36 +2,39 @@
 using namespace std;
 
 typedef long long int ll;
-#define INF 987654321
 #define FASTIO cin.tie(0); cout.tie(0); ios_base::sync_with_stdio(0);
 #define FOR(i,a,b) for(int i=(a);i<=(b);i++)
 #define ROF(i,a,b) for(int i=(a);i>=(b);i--)
+#define pii pair<int, int>
+#define INF 2100000000
 
-int m[101];
-int c[101];
-int dp[101][10001] = { 0, };
+pii A[101];
+int max_byte[10001];
 
 int main() {
 	FASTIO;
 	int N, M;
-	int ans = INF;
 	cin >> N >> M;
 	FOR(i, 1, N)
-		cin >> m[i];
+		cin >> A[i].first;
 	FOR(i, 1, N)
-		cin >> c[i];
-	dp[1][c[1]] = m[1];
-	FOR(i, 2, N) {
-		FOR(j, 0, 10000) {
-			if (j - c[i] >= 0)
-				dp[i][j] = max(dp[i - 1][j], dp[i - 1][j - c[i]] + m[i]);
-			else
-				dp[i][j] = dp[i - 1][j];
-			if (dp[i][j] >= M)
-				ans = min(ans, j);
+		cin >> A[i].second;
+	max_byte[0] = 0;
+	FOR(i, 1, 10000)
+		max_byte[i] = -1;
+	int sum = 0;
+	FOR(i, 1, N) {
+		sum += A[i].second;
+		for (int j = sum; j - A[i].second >= 0; j--) {
+			max_byte[j] = max(max_byte[j], max_byte[j - A[i].second] + A[i].first);
 		}
 	}
-	cout << ans;
+	FOR(i, 0, sum) {
+		if (max_byte[i] >= M) {
+			cout << i;
+			break;
+		}
+	}
 
 	return 0;
 }
