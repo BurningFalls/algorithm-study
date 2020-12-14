@@ -1,172 +1,74 @@
-#include <iostream>
+#include <bits/stdc++.h>
 using namespace std;
 
-char map[50][50];
+typedef long long int ll;
+#define FASTIO cin.tie(0); cout.tie(0); ios_base::sync_with_stdio(0);
+#define FOR(i,a,b) for(int i=(a);i<=(b);i++)
+#define ROF(i,a,b) for(int i=(a);i>=(b);i--)
+#define pii pair<int, int>
 
-int first_checking(int n) {
-	int cur_col;
-	int cur_row;
-	int count;
-	int col_max = 0;
-	int all_col_max = 0;
-	int row_max = 0;
-	int all_row_max = 0;
-	for (int j = 0; j < n; j++) {
-		cur_row = 0;
-		while (cur_row < n - 1) {
-			count = 1;
-			for (int i = 1; i < n - cur_row; i++) {
-				if (map[j][cur_row] == map[j][cur_row + i]) {
-					count++;
-				}
-				else
-					break;
-			}
-			if (row_max < count) {
-				row_max = count;
-			}
-			cur_row++;
-		}
-		if (all_row_max < row_max) {
-			all_row_max = row_max;
-		}
-	}
+int N;
+char arr[51][51];
 
-	for (int j = 0; j < n; j++) {
-		cur_col = 0;
-		while (cur_col < n - 1) {
-			count = 1;
-			for (int i = 1; i < n - cur_col; i++) {
-				if (map[cur_col][j] == map[cur_col + i][j]) {
-					count++;
-				}
-				else
-					break;
+int Eat() {
+	int maximum = 0;
+	FOR(i, 1, N) {
+		int cnt = 1;
+		int max_cnt = 0;
+		FOR(j, 2, N) {
+			if (arr[i][j] == arr[i][j - 1])
+				cnt++;
+			else {
+				max_cnt = max(max_cnt, cnt);
+				cnt = 1;
 			}
-			if (col_max < count) {
-				col_max = count;
-			}
-			cur_col++;
 		}
-		if (all_col_max < col_max) {
-			all_col_max = col_max;
-		}
+		max_cnt = max(max_cnt, cnt);
+		maximum = max(maximum, max_cnt);
 	}
-	if (all_row_max > all_col_max)
-		return all_row_max;
-	else
-		return all_col_max;
+	FOR(i, 1, N) {
+		int cnt = 1;
+		int max_cnt = 0;
+		FOR(j, 2, N) {
+			if (arr[j][i] == arr[j - 1][i])
+				cnt++;
+			else {
+				max_cnt = max(max_cnt, cnt);
+				cnt = 1;
+			}
+		}
+		max_cnt = max(max_cnt, cnt);
+		maximum = max(maximum, max_cnt);
+	}
+	return maximum;
 }
-
-int checking(int n, int col, int row, bool b) {
-	int i, j;
-	int row_count, col_count;
-	int row_max = 0;
-	int col_max = 0;
-
-	if (b) {
-		i = 1;
-		j = 1;
-		for (int k = 0; k < 2; k++) {
-			col_count = 1;
-			while (col - i >= 0) {
-				if (map[col][row + k] == map[col - i][row + k]) {
-					col_count++;
-					i++;
-				}
-				else
-					break;
-			}
-			while (col + j < n) {
-				if (map[col][row + k] == map[col + j][row + k]) {
-					col_count++;
-					j++;
-				}
-				else
-					break;
-			}
-			if (col_max < col_count)
-				col_max = col_count;
-		}
-		return col_max;
-	}
-	else if (!b) {
-		i = 1;
-		j = 1;
-		for (int k = 0; k < 2; k++) {
-			row_count = 1;
-			while (row - i >= 0) {
-				if (map[col + k][row] == map[col + k][row - i]) {
-					row_count++;
-					i++;
-				}
-				else
-					break;
-			}
-			while (row + j < n) {
-				if (map[col + k][row] == map[col + k][row + j]) {
-					row_count++;
-					j++;
-				}
-				else
-					break;
-			}
-			if (row_max < row_count)
-				row_max = row_count;
-		}
-		return row_max;
-	}
-	return 0;
-}
-
-int candygame(int n) {
-	char temp = ' ';
-	int max = first_checking(n);
-	int result = 0;
-	bool is_row = true;
-
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n - 1; j++) {
-			if (map[i][j] != map[i][j + 1]) {
-				temp = map[i][j];
-				map[i][j] = map[i][j + 1];
-				map[i][j + 1] = temp;
-				result = checking(n, i, j, is_row);
-				if (max < result) {
-					max = result;
-				}
-				map[i][j + 1] = map[i][j];
-				map[i][j] = temp;
-			}
-		}
-	}
-	is_row = false;
-	for (int i = 0; i < n - 1; i++) {
-		for (int j = 0; j < n; j++) {
-			if (map[i][j] != map[i + 1][j]) {
-				temp = map[i][j];
-				map[i][j] = map[i + 1][j];
-				map[i + 1][j] = temp;
-				result = checking(n, i, j, is_row);
-				if (max < result) {
-					max = result;
-				}
-				map[i + 1][j] = map[i][j];
-				map[i][j] = temp;
-			}
-		}
-	}
-	return max;
-}
-
-
 
 int main() {
-	int N;
+	FASTIO;
+	int ans = 0;
 	cin >> N;
-	for (int i = 0; i < N; i++) {
-		cin >> map[i];
+	FOR(i, 1, N) {
+		FOR(j, 1, N) {
+			cin >> arr[i][j];
+		}
 	}
-	cout << candygame(N) << endl;
+	FOR(i, 1, N) {
+		FOR(j, 1, N - 1) {
+			if (arr[i][j] == arr[i][j + 1]) continue;
+			swap(arr[i][j], arr[i][j + 1]);
+			ans = max(ans, Eat());
+			swap(arr[i][j], arr[i][j + 1]);
+		}
+	}
+	FOR(i, 1, N) {
+		FOR(j, 1, N - 1) {
+			if (arr[j][i] == arr[j + 1][i]) continue;
+			swap(arr[j][i], arr[j + 1][i]);
+			ans = max(ans, Eat());
+			swap(arr[j][i], arr[j + 1][i]);
+		}
+	}
+	cout << ans;
+
 	return 0;
 }
