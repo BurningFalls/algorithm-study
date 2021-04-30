@@ -7,28 +7,31 @@ typedef long long int ll;
 #define ROF(i,a,b) for(int i=(a);i>=(b);i--)
 #define pii pair<int, int>
 
-int arr[10001];
+ll arr[10001];
 
 int main() {
 	FASTIO;
-	int N, K;
+	ll N, K;
 	cin >> N >> K;
-	int maxi = 0;
+	ll maxi = 0;
 	FOR(i, 1, N) {
 		cin >> arr[i];
 		maxi = max(maxi, arr[i]);
 	}
-	int left = 1, right = maxi;
-	int ans = 0;
+	ll left = 0, right = maxi;
+	ll ans = 0;
 	while (left <= right) {
-		int mid = (left + right) / 2;
-		int tmp = 0;
-		FOR(i, 1, N) {
-			tmp += arr[i] / mid;
+		ll mid = (left + right) / 2;
+		ll sum = 0;
+		if (mid == 0)
+			sum = 0;
+		else {
+			FOR(i, 1, N)
+				sum += arr[i] / mid;
 		}
-		if (tmp >= K) {
-			ans = mid;
+		if (sum >= K) {
 			left = mid + 1;
+			ans = max(ans, mid);
 		}
 		else {
 			right = mid - 1;
