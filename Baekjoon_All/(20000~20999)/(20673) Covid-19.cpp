@@ -11,7 +11,7 @@ int main() {
 	FASTIO;
 	int a, b;
 	cin >> a >> b;
-	if (b <= 10)
+	if (a <= 50 && b <= 10)
 		cout << "White";
 	else if (b >= 30)
 		cout << "Red";
