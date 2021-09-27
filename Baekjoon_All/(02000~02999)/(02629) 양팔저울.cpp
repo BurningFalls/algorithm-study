@@ -3,48 +3,46 @@ using namespace std;
 
 typedef long long int ll;
 #define FASTIO cin.tie(0); cout.tie(0); ios_base::sync_with_stdio(0);
+#define MEMSET(arr, num) memset(arr, num, sizeof(arr));
 #define FOR(i,a,b) for(int i=(a);i<=(b);i++)
 #define ROF(i,a,b) for(int i=(a);i>=(b);i--)
 #define pii pair<int, int>
+#define LEN(s) int(s.size())
 
 int N, M;
 int arr[31];
-int ball[8];
-bool dp[31][15001] = { 0, };
+bool dp[32][15001] = { 0, };
 
-void DP(int cnt, int weight) {
-	if (cnt > N)
+void DP(int node, int weight) {
+	if (node > N + 1)
 		return;
-	if (dp[cnt][weight])
+	if (dp[node][weight])
 		return;
-	dp[cnt][weight] = 1;
-	DP(cnt + 1, weight);
-	DP(cnt + 1, weight + arr[cnt]);
-	DP(cnt + 1, abs(weight - arr[cnt]));
+	dp[node][weight] = 1;
+	DP(node + 1, weight + arr[node]);
+	DP(node + 1, abs(weight - arr[node]));
+	DP(node + 1, weight);
 }
 
 int main() {
 	FASTIO;
 	cin >> N;
-	FOR(i, 0, N - 1)
+	FOR(i, 1, N)
 		cin >> arr[i];
-
-	DP(0, 0);
-
+	DP(1, 0);
+	int weight;
+	vector<char> ans;
 	cin >> M;
-	FOR(i, 1, M)
-		cin >> ball[i];
-
 	FOR(i, 1, M) {
-		if (ball[i] > 15000)
-			cout << "N ";
-		else {
-			if (dp[N][ball[i]])
-				cout << "Y ";
-			else
-				cout << "N ";
-		}
+		cin >> weight;
+		if (weight > 15000)
+			ans.push_back('N');
+		else
+			ans.push_back(dp[N + 1][weight] ? 'Y' : 'N');
 	}
+	for (char x : ans)
+		cout << x << " ";
+
 
 	return 0;
 }

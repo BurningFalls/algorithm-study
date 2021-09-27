@@ -1,37 +1,44 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#define FASTIO ios_base::sync_with_stdio(false); cin.tie(0); cout.tie(0);
-#define FOR(i, a, b) for(int i=a;i<=b;i++)
-#define ROF(i, a, b) for(int i=a;i>=b;i--)
+typedef long long int ll;
+#define FASTIO cin.tie(0); cout.tie(0); ios_base::sync_with_stdio(0);
+#define MEMSET(arr, num) memset(arr, num, sizeof(arr));
+#define FOR(i,a,b) for(int i=(a);i<=(b);i++)
+#define ROF(i,a,b) for(int i=(a);i>=(b);i--)
 #define pii pair<int, int>
-#define ll long long int
+#define LEN(s) int(s.size())
 
-pair<int, int> candy[5001];
+int C[5001];
+int P[5001];
 int dp[10001];
 
 int main() {
 	FASTIO;
-	int N;
-	double M;
+	int N, M;
+	double m;
 	while (true) {
-		cin >> N >> M;
-		if (N == 0 && M == 0)
+		MEMSET(dp, -1);
+		cin >> N >> m;
+		if (N == 0)
 			break;
-		memset(dp, 0, sizeof(dp));
+		M = int(m * 100 + 0.5);
 		FOR(i, 1, N) {
-			int C;
-			double P;
-			cin >> C >> P;
-			candy[i] = { C, (int)(P * 100 + 0.5) };
+			double p;
+			cin >> C[i] >> p;
+			P[i] = int(p * 100 + 0.5);
 		}
-		int new_M = (int)(M * 100) + 0.5;
+		dp[0] = 0;
 		FOR(i, 1, N) {
-			FOR(j, candy[i].second, new_M) {
-				dp[j] = max(dp[j], dp[j - candy[i].second] + candy[i].first);
+			FOR(j, P[i], M) {
+				if (dp[j - P[i]] == -1) continue;
+				dp[j] = max(dp[j], dp[j - P[i]] + C[i]);
 			}
 		}
-		cout << dp[new_M] << "\n";
+		int maxi = 0;
+		FOR(i, 0, M)
+			maxi = max(maxi, dp[i]);
+		cout << maxi << "\n";
 	}
 
 	return 0;

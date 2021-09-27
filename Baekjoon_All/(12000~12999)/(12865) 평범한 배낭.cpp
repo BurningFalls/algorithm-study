@@ -1,36 +1,37 @@
-#include <iostream>
-#include <vector>
-#include <algorithm>
+#include <bits/stdc++.h>
 using namespace std;
 
-int dp[101][100001] = { 0, };
+typedef long long int ll;
+#define FASTIO cin.tie(0); cout.tie(0); ios_base::sync_with_stdio(0);
+#define MEMSET(arr, num) memset(arr, num, sizeof(arr));
+#define FOR(i,a,b) for(int i=(a);i<=(b);i++)
+#define ROF(i,a,b) for(int i=(a);i>=(b);i--)
+#define pii pair<int, int>
+#define LEN(s) int(s.size())
+
+int W[101], V[101];
+int dp[100001];
 
 int main() {
+	FASTIO;
+	MEMSET(dp, -1);
 	int N, K;
-	vector<pair<int, int>> v; // v.first = W, v.second = V
-	int W, V;
 	cin >> N >> K;
-	v.push_back(make_pair(-1, -1));
-	for (int i = 1; i <= N; i++) {
-		cin >> W >> V;
-		v.push_back(make_pair(W, V));
+	FOR(i, 1, N) {
+		cin >> W[i] >> V[i];
 	}
-	for (int j = 1; j <= K; j++) {
-		if (v[1].first <= j)
-			dp[1][j] = v[1].second;
-	}
-	for (int i = 2; i <= N; i++) {
-		for (int j = 1; j <= K; j++) {
-			if (v[i].first <= j) {
-				dp[i][j] = max(dp[i - 1][j], dp[i - 1][j - v[i].first] + v[i].second);
-			}
-			else if (v[i].first > j) {
-				dp[i][j] = dp[i - 1][j];
-			}
+	dp[0] = 0;
+	FOR(i, 1, N) {
+		ROF(j, K, W[i]) {
+			if (dp[j - W[i]] == -1) continue;
+			dp[j] = max(dp[j], dp[j - W[i]] + V[i]);
 		}
 	}
+	int maxi = 0;
+	FOR(i, 0, K)
+		maxi = max(maxi, dp[i]);
+	cout << maxi;
 
-	cout << dp[N][K];
 
 	return 0;
 }
