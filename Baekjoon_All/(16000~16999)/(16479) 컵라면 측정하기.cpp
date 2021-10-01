@@ -1,0 +1,20 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+typedef long long int ll;
+#define FASTIO cin.tie(0); cout.tie(0); ios_base::sync_with_stdio(0);
+#define MEMSET(arr, num) memset(arr, num, sizeof(arr));
+#define FOR(i,a,b) for(int i=(a);i<=(b);i++)
+#define ROF(i,a,b) for(int i=(a);i>=(b);i--)
+#define pii pair<int, int>
+#define LEN(s) int(s.size())
+
+int main() {
+	FASTIO;
+	double K, D1, D2;
+	cin >> K >> D1 >> D2;
+	cout << fixed << setprecision(6);
+	cout << K * K - ((D1 - D2) / 2) * ((D1 - D2) / 2);
+
+	return 0;
+}
