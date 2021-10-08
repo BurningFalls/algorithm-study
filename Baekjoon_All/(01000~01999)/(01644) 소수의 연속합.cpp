@@ -1,70 +1,61 @@
-#include <iostream>
-#include <math.h>
+#include <bits/stdc++.h>
 using namespace std;
 
-bool arr[4000101] = { 0, };
+#define FASTIO cin.tie(0); cout.tie(0); ios_base::sync_with_stdio(0);
+#define FOR(i,a,b) for(int i=(a);i<=(b);i++)
+#define ROF(i,a,b) for(int i=(a);i>=(b);i--)
+#define ll long long int
+#define pii pair<int, int>
+#define PQ priority_queue
+#define LEN(v) int(v.size())
+#define ALL(v) v.begin(),v.end()
+#define INF 2e9
+#define LINF 1e18
+#define P1(a) cout << a << "\n"
+#define P2(a, b) cout << a << " " << b << "\n";
+#define P3(a, b, c) cout << a << " " << b << " " << c << "\n";
 
-bool Check(int n) {
-	if (n == 2)
-		return true;
-	for (int i = 2; i <= sqrt(n); i++) {
-		if (n % i == 0)
-			return false;
+vector<int> is_prime(4000010, 1);
+
+void Find_Prime(int N) {
+	is_prime[1] = 0;
+	FOR(i, 2, N) {
+		if (!is_prime[i]) continue;
+		for (int j = i * 2; j <= N; j += i)
+			is_prime[j] = 0;
 	}
-	return true;
 }
 
 int main() {
-	cin.tie(NULL);
-	std::ios_base::sync_with_stdio(false);
+	FASTIO;
 	int N;
-	int sum = 0;
-	int cnt = 0;
-	int start = 2, end = 2;
-	int k = 0;
 	cin >> N;
-	for (int i = 2; i <= N + 100; i++) {
-		if (Check(i))
-			arr[i] = 1;
-	}
-	for (int i = 2; i <= N; i++) {
-		if (arr[i]) {
-			sum += i;
-			if (sum >= N) {
-				end = i;
-				break;
-			}
-		}
-	}
-	if (arr[N])
-		cnt++;
-	while (start <= N / 2 && end <= N) {
-		if (sum <= N) {
-			if (sum == N)
-				cnt++;
-			k = end + 1;
-			while (true) {
-				if (arr[k]) {
-					sum += k;
-					end = k;
-					break;
-				}
-				k++;
-			}
+	Find_Prime(N);
+	int left = 2, right = 2;
+	int sum = 2;
+	int cnt = 0;
+	while (left <= right && right <= N) {
+		if (sum == N) {
+			cnt++;
+			sum -= left;
+			left++;
+			while (left <= 4000000 && !is_prime[left])
+				left++;
 		}
 		else if (sum > N) {
-			sum -= start;
-			k = start + 1;
-			while (true) {
-				if (arr[k]) {
-					start = k;
-					break;
-				}
-				k++;
-			}
+			sum -= left;
+			left++;
+			while (left <= 4000000 && !is_prime[left])
+				left++;
+		}
+		else if (sum < N) {
+			right++;
+			while (right <= 4000000 && !is_prime[right])
+				right++;
+			sum += right;
 		}
 	}
-	cout << cnt;
+	P1(cnt);
 
 	return 0;
 }
