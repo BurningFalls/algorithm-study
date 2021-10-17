@@ -22,11 +22,9 @@ vector<int> dy = { -1, 1, 0, 0 };
 vector<int> dx = { 0, 0, -1, 1 };
 vector<vector<char>> Map(51, vector<char>(51));
 vvi visited(51, vi(51, 0));
-vvi finished(51, vi(51, 0));
 
 bool DFS(char c, int y, int x, int py, int px) {
 	visited[y][x] = 1;
-	finished[y][x] = 1;
 	bool flag = false;
 	FOR(i, 0, 3) {
 		int ny = y + dy[i];
@@ -41,7 +39,6 @@ bool DFS(char c, int y, int x, int py, int px) {
 			flag |= DFS(c, ny, nx, y, x);
 		}
 	}
-	visited[y][x] = 0;
 	return flag;
 }
 
@@ -56,7 +53,7 @@ int main() {
 	bool flag = false;
 	FOR(i, 0, N - 1) {
 		FOR(j, 0, M - 1) {
-			if (finished[i][j]) continue;
+			if (visited[i][j]) continue;
 			flag |= DFS(Map[i][j], i, j, -1, -1);
 		}
 	}
