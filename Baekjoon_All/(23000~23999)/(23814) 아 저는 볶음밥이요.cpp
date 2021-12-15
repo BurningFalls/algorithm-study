@@ -19,12 +19,13 @@ int main() {
 	cin >> D;
 	cin >> N >> M >> K;
 	ll maxi_bok = 0, maxi_gun = 0;
-	ll add1 = D - N % D;
-	ll add2 = D - M % D;
+	ll add1 = (D - N % D) % D;
+	ll add2 = (D - M % D) % D;
 	pll adding[4] = { {0, 0}, {add1, 0}, {0, add2}, {add1, add2} };
 	FOR(i, 0, 3) {
 		ll a1 = adding[i].first;
 		ll a2 = adding[i].second;
+		if (K < a1 + a2) continue;
 		ll tmp = (N + a1) / D + (M + a2) / D + (K - a1 - a2) / D;
 		if (maxi_gun < tmp) {
 			maxi_gun = tmp;
