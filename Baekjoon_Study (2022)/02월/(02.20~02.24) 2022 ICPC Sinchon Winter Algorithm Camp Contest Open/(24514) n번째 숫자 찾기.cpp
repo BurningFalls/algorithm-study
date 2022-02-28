@@ -35,7 +35,7 @@ int main() {
 	FOR(t, 1, T) {
 		ll N;
 		cin >> N;
-		int left = 1, right = sqrt(2 * N);
+		int left = 1, right = sqrt(N) + 10;
 		int ans = 0;
 		while (left <= right) {
 			int mid = (left + right) / 2;
