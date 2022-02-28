@@ -16,19 +16,19 @@ int main() {
 	FASTIO;
 	int T, K;
 	cin >> T >> K;
-	vector<ll> cnt(63251, 0), cnt_sum(63251, 0);
+	vector<ll> cnt(44731, 0), cnt_sum(44731, 0);
 	ll num = K;
 	ll len = 1;
 	cnt[1] = 1;
 	cnt_sum[1] = 1;
-	FOR(i, 2, 63250) {
+	FOR(i, 2, 44730) {
 		if (num == i) {
 			len++;
 			num *= K;
 		}
 		cnt[i] = cnt[i - 1] + len;
 	}
-	FOR(i, 2, 63250) {
+	FOR(i, 2, 44730) {
 		cnt_sum[i] = cnt_sum[i - 1] + cnt[i];
 	}
 
