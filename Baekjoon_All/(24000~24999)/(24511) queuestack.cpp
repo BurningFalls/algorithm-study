@@ -16,27 +16,28 @@ int main() {
 	FASTIO;
 	int N, M;
 	cin >> N;
-	vector<int> A(N);
+	vector<int> A(N), B(N);
 	FOR(i, 0, N - 1) {
 		cin >> A[i];
 	}
-	deque<int> dq;
+	queue<int> q;
 	FOR(i, 0, N - 1) {
-		int num;
-		cin >> num;
+		cin >> B[i];
+	}
+	ROF(i, N - 1, 0) {
 		if (A[i] == 0) {
-			dq.push_back(num);
+			q.push(B[i]);
 		}
 	}
 	cin >> M;
 	FOR(i, 0, M - 1) {
 		int num;
 		cin >> num;
-		dq.push_front(num);
+		q.push(num);
 	}
-	int len = LEN(dq);
-	ROF(i, len - 1, len - M) {
-		cout << dq[i] << " ";
+	FOR(i, 1, M) {
+		cout << q.front() << " ";
+		q.pop();
 	}
 
 	return 0;
