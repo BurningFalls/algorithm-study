@@ -1,41 +1,53 @@
-#include <iostream>
-#include <algorithm>
-#include <math.h>
-#include <vector>
+#include <bits/stdc++.h>
 using namespace std;
 
+#define FASTIO cin.tie(0); cout.tie(0); ios_base::sync_with_stdio(0);
+#define FOR(i,a,b) for(int i=(a);i<=(b);i++)
+#define ROF(i,a,b) for(int i=(a);i>=(b);i--)
+#define ll long long int
+#define pii pair<int, int>
+#define PQ priority_queue
+#define LEN(v) int(v.size())
+#define ALL(v) v.begin(),v.end()
+#define INF 2e9
+#define LINF 1e18
+
 int main() {
-	cin.tie(NULL);
-	std::ios_base::sync_with_stdio(false);
+	FASTIO;
 	int N;
 	cin >> N;
-	int* arr = new int[N];
-	int cnt[8001] = { 0, };
-	double A = 0;
-	int maximum = -1;
-	vector<int> maximum_loc;
-	for (int i = 0; i < N; i++) {
-		cin >> arr[i];
-		A += arr[i];
-		cnt[arr[i] + 4000]++;
+	vector<double> v(N);
+	vector<int> cnt(8001, 0);
+	double maxi = -4001, mini = 4001;
+	double sum = 0;
+	FOR(i, 0, N - 1) {
+		cin >> v[i];
+		sum += v[i];
+		cnt[int(v[i]) + 4000]++;
+		maxi = max(maxi, v[i]);
+		mini = min(mini, v[i]);
 	}
-	cout << round(A / N) << "\n";
-	sort(arr, arr + N);
-	cout << arr[N / 2] << "\n";
-	maximum = *max_element(cnt, cnt + 8001);
-	for (int i = 0; i <= 8000; i++) {
-		if (maximum == cnt[i]) {
-			maximum_loc.push_back(i - 4000);
+	sort(ALL(v));
+	int x = round(sum / N);
+	cout << x << "\n";
+	cout << int(v[N / 2]) << "\n";
+	vector<int> tmp;
+	int max_cnt = 0;
+	FOR(i, 0, 8000) {
+		max_cnt = max(max_cnt, cnt[i]);
+	}
+	FOR(i, 0, 8000) {
+		if (cnt[i] == max_cnt) {
+			tmp.push_back(i - 4000);
 		}
 	}
-	if (maximum_loc.size() >= 2) {
-		sort(maximum_loc.begin(), maximum_loc.end());
-		cout << maximum_loc[1] << "\n";
+	if (LEN(tmp) == 1) {
+		cout << tmp[0] << "\n";
 	}
-	else {
-		cout << maximum_loc[0] << "\n";
+	else if (LEN(tmp) >= 2) {
+		cout << tmp[1] << "\n";
 	}
-	cout << abs(arr[N - 1] - arr[0]) << "\n";
+	cout << int(maxi - mini);
 
 	return 0;
 }
