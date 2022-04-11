@@ -1,39 +1,38 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-typedef long long int ll;
 #define FASTIO cin.tie(0); cout.tie(0); ios_base::sync_with_stdio(0);
 #define FOR(i,a,b) for(int i=(a);i<=(b);i++)
 #define ROF(i,a,b) for(int i=(a);i>=(b);i--)
+#define ll long long int
 #define pii pair<int, int>
-
-ll arr[10001];
+#define PQ priority_queue
+#define LEN(v) int(v.size())
+#define ALL(v) v.begin(),v.end()
+#define INF 2e9
+#define LINF 1e18
 
 int main() {
 	FASTIO;
-	ll N, K;
+	int N, K;
 	cin >> N >> K;
-	ll maxi = 0;
-	FOR(i, 1, N) {
-		cin >> arr[i];
-		maxi = max(maxi, arr[i]);
+	vector<ll> v(N);
+	FOR(i, 0, N - 1) {
+		cin >> v[i];
 	}
-	ll left = 0, right = maxi;
+	ll left = 0, right = (1LL << 31) - 1;
 	ll ans = 0;
 	while (left <= right) {
 		ll mid = (left + right) / 2;
-		ll sum = 0;
-		if (mid == 0)
-			sum = 0;
-		else {
-			FOR(i, 1, N)
-				sum += arr[i] / mid;
+		int cnt = 0;
+		FOR(i, 0, N - 1) {
+			cnt += v[i] / mid;
 		}
-		if (sum >= K) {
-			left = mid + 1;
+		if (cnt >= K) {
 			ans = max(ans, mid);
+			left = mid + 1;
 		}
-		else {
+		else if (cnt < K) {
 			right = mid - 1;
 		}
 	}
