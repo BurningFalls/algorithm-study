@@ -45,20 +45,14 @@ int main() {
 		if (timing.second == N) {
 			v.push_back(timing.first);
 		}
-		if (idx == 2) {
-			timing = Calc(timing, add[idx]);
-			idx = 0;
-		}
-		else {
-			timing = Calc(timing, add[idx]);
-			idx += 1;
-		}
+		timing = Calc(timing, add[idx]);
+		idx = (idx + 1) % 3;
 	}
+
 	cout << LEN(v) << "\n";
 	for(int x : v) {
 		cout << Ch(x) << "\n";
 	}
-
 
 	return 0;
 }
