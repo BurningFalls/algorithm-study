@@ -37,7 +37,7 @@ int main() {
 	int N, K;
 	cin >> N >> K;
 	pii timing = { 900, 0 };
-	int add[3] = { 180, 180, 1080 };
+	int add[3] = { 180, 180, 1080 + K };
 	int cnt = 0;
 	vector<int> v;
 	int idx = 0;
@@ -46,7 +46,7 @@ int main() {
 			v.push_back(timing.first);
 		}
 		if (idx == 2) {
-			timing = Calc(timing, add[idx] + K);
+			timing = Calc(timing, add[idx]);
 			idx = 0;
 		}
 		else {
