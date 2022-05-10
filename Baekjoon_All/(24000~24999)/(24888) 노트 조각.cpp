@@ -17,12 +17,14 @@ int N, M;
 vector<vector<pii>> Edge(MAX, vector<pii>());
 vector<int> A(MAX);
 vector<ll> Dist(MAX, LINF);
-vector<int> Route(MAX);
-int note_sum = 0;
+vector<int> A_cnt(MAX, 0);
+vector<int> Route;
+int A_sum = 0;
 
 void DT() {
 	PQ<pair<ll, int>> pq;
 	pq.push({ 0, 1 });
+	A_cnt[1] = A[1];
 	Dist[1] = 0;
 	while (!pq.empty()) {
 		ll cost = -pq.top().first;
@@ -34,30 +36,33 @@ void DT() {
 			ll ncost = Edge[cur][i].second + cost;
 			if (Dist[next] > ncost) {
 				Dist[next] = ncost;
+				A_cnt[next] = max(A_cnt[next], A_cnt[cur] + A[next]);
 				pq.push({ -Dist[next], next });
+			}
+			else if (Dist[next] == ncost) {
+				A_cnt[next] = max(A_cnt[next], A_cnt[cur] + A[next]);
 			}
 		}
 	}
 }
 
-void BT(int cur, int idx, int sum) {
-	Route[idx] = cur;
-	if (cur == N) {
-		if (sum == note_sum) {
-			cout << idx + 1 << "\n";
-			FOR(i, 0, idx) {
-				cout << Route[i] << " ";
-			}
-			exit(0);
+void DFS(int node, int prev) {
+	if (node == 1) {
+		cout << LEN(Route) << "\n";
+		ROF(i, LEN(Route) - 1, 0) {
+			cout << Route[i] << " ";
 		}
-		return;
+		exit(0);
 	}
-	FOR(i, 0, LEN(Edge[cur]) - 1) {
-		int next = Edge[cur][i].first;
-		ll cost = Edge[cur][i].second;
-		if (Dist[cur] + cost == Dist[next]) {
-			BT(next, idx + 1, sum + A[next]);
-		}
+	FOR(i, 0, LEN(Edge[node]) - 1) {
+		int next = Edge[node][i].first;
+		int cost = Edge[node][i].second;
+		if (next == prev) continue;
+		if (Dist[next] + cost != Dist[node]) continue;
+		if (A_cnt[next] + A[node] != A_cnt[node]) continue;
+		Route.push_back(next);
+		DFS(next, node);
+		Route.pop_back();
 	}
 }
 
@@ -72,12 +77,18 @@ int main() {
 	}
 	FOR(i, 1, N) {
 		cin >> A[i];
-		note_sum += A[i];
+		A_sum += A[i];
 	}
 
 	DT();
-	BT(1, 0, A[1]);
-	cout << -1;
+
+	if (A_cnt[N] != A_sum) {
+		cout << -1;
+		return 0;
+	}
+
+	Route.push_back(N);
+	DFS(N, 0);
 
 	return 0;
 }
