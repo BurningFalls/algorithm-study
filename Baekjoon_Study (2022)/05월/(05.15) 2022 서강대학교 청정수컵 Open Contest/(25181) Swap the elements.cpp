@@ -14,8 +14,8 @@ using namespace std;
 
 vector<int> cnt(100001, 0);
 
-bool compare(pii a, pii b) {
-	return cnt[a.first] > cnt[b.first];
+bool compare1(pii a, pii b) {
+	return a.first < b.first;
 }
 
 bool compare2(pii a, pii b) {
@@ -45,14 +45,14 @@ int main() {
 	}
 	else {
 		vector<pii> B(N);
-		vector<pii> C(N);
 		FOR(i, 0, N - 1) {
-			C[i] = { A[i], i };
+			B[i] = { A[i], i };
 		}
-		sort(ALL(C), compare);
-		FOR(i, 0, N - 1) {
-			B[i].first = C[N - i - 1].first;
-			B[i].second = C[i].second;
+		sort(ALL(B), compare1);
+		FOR(i, 0, (N - 1) / 2) {
+			int tmp = B[i].first;
+			B[i].first = B[i + N / 2].first;
+			B[i + N / 2].first = tmp;
 		}
 		sort(ALL(B), compare2);
 		FOR(i, 0, N - 1) {
