@@ -15,7 +15,6 @@ using namespace std;
 struct NODE {
 	vector<string> wrong_time;
 	vector<string> solve_time;
-	vector<int> solve_idx;
 };
 
 map<string, NODE> mp;
