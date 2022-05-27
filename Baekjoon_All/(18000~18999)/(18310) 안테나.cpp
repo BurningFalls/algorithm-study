@@ -1,37 +1,28 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#define FASTIO ios_base::sync_with_stdio(false); cin.tie(0); cout.tie(0);
-#define FOR(i, a, b) for(int i=a;i<=b;i++)
-#define ROF(i, a, b) for(int i=a;i>=b;i--)
-#define pii pair<int, int>
+#define FASTIO cin.tie(0); cout.tie(0); ios_base::sync_with_stdio(0);
+#define FOR(i,a,b) for(int i=(a);i<=(b);i++)
+#define ROF(i,a,b) for(int i=(a);i>=(b);i--)
 #define ll long long int
-
-int N;
-ll arr[200001];
-ll sum[200001];
+#define pii pair<int, int>
+#define PQ priority_queue
+#define LEN(v) int(v.size())
+#define ALL(v) v.begin(),v.end()
+#define INF int(2e9)
+#define LINF ll(1e18)
+#define MAX 100001
 
 int main() {
 	FASTIO;
+	int N;
 	cin >> N;
-	sum[0] = 0;
-	FOR(i, 1, N)
-		cin >> arr[i];
-	sort(arr + 1, arr + N + 1);
-	FOR(i, 1, N)
-		sum[i] = sum[i - 1] + arr[i];
-	int pos = arr[1];
-	ll minimum = sum[N] - arr[1] * N;
-	int ans = 1;
-	FOR(i, 2, N) {
-		ll tmp1 = sum[N] - sum[i - 1] - arr[i] * ((ll)N + 1 - i);
-		ll tmp2 = arr[i] * i - sum[i];
-		if (minimum > tmp1 + tmp2) {
-			minimum = tmp1 + tmp2;
-			ans = arr[i];
-		}
+	vector<int> v(N);
+	FOR(i, 0, N - 1) {
+		cin >> v[i];
 	}
-	cout << ans;
+	sort(ALL(v));
+	cout << v[(N - 1) / 2];
 
 	return 0;
 }
