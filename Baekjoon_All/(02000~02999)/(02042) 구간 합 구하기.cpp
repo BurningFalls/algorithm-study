@@ -1,64 +1,78 @@
-#include <iostream>
+#include <bits/stdc++.h>
 using namespace std;
 
-typedef long long int ll;
+#define FASTIO cin.tie(0); cout.tie(0); ios_base::sync_with_stdio(0);
+#define FOR(i,a,b) for(int i=(a);i<=(b);i++)
+#define ROF(i,a,b) for(int i=(a);i>=(b);i--)
+#define ll long long int
+#define pii pair<int, int>
+#define PQ priority_queue
+#define LEN(v) (int)v.size()
+#define ALL(v) v.begin(),v.end()
+#define INF (int)2e9
+#define LINF (ll)1e18
+#define MAX 1000001
 
-int N; // 수의 개수 (1~1,000,000)
-int M; // 수의 변경이 일어나는 횟수 (1~10,000)
-int K; // 구간의 합을 구하는 횟수 (1~10,000)
-ll arr[1000001]; // 수
-ll tree[4000001]; // 트리
+int N;	// 수의 개수
+int M;	// 수의 변경이 일어나는 횟수
+int K;	// 구간의 합을 구하는 횟수
+vector<ll> arr(MAX);
+vector<ll> tree(4 * MAX);
 
-ll Make_Tree(int node, int start, int end) {
-	if (start == end)
+ll Init(int node, int start, int end) {
+	if (start == end) {
 		return tree[node] = arr[start];
-
+	}
 	int mid = (start + end) / 2;
-	return tree[node] = Make_Tree(node * 2, start, mid) + Make_Tree(node * 2 + 1, mid + 1, end);
+	ll LQ = Init(node * 2, start, mid);
+	ll RQ = Init(node * 2 + 1, mid + 1, end);
+	return tree[node] = LQ + RQ;
 }
 
-void Change_Number(int node, int start, int end, int target, ll dif) {
-	if (start <= target && target <= end)
-		tree[node] += dif;
-	else
-		return;
-	if (start == end)
-		return;
-
+ll Update(int node, int start, int end, int idx, ll num) {
+	if (idx < start || end < idx) {
+		return tree[node];
+	}
+	if (start == end) {
+		return tree[node] = num;
+	}
 	int mid = (start + end) / 2;
-	Change_Number(node * 2, start, mid, target, dif);
-	Change_Number(node * 2 + 1, mid + 1, end, target, dif);
+	ll LQ = Update(node * 2, start, mid, idx, num);
+	ll RQ = Update(node * 2 + 1, mid + 1, end, idx, num);
+	return tree[node] = LQ + RQ;
 }
 
 ll Sum(int node, int start, int end, int left, int right) {
-	if (left > end || right < start)
+	if (right < start || end < left) {
 		return 0;
-	if (left <= start && end <= right)
+	}
+	if (left <= start && end <= right) {
 		return tree[node];
-
+	}
 	int mid = (start + end) / 2;
-	return Sum(node * 2, start, mid, left, right) + Sum(node * 2 + 1, mid + 1, end, left, right);
+	ll LQ = Sum(node * 2, start, mid, left, right);
+	ll RQ = Sum(node * 2 + 1, mid + 1, end, left, right);
+	return LQ + RQ;
 }
 
 int main() {
-	ll a, b, c;
-	ll differ;
+	FASTIO;
 	cin >> N >> M >> K;
-	for (int i = 1; i <= N; i++)
+	FOR(i, 1, N) {
 		cin >> arr[i];
-
-	Make_Tree(1, 1, N);
-
-	for (int i = 0; i < M + K; i++) {
+	}
+	Init(1, 1, N);
+	FOR(i, 1, M + K) {
+		int a, b;
+		ll c;
 		cin >> a >> b >> c;
 		if (a == 1) {
 			// b번째 수를 c로 바꿈
-			differ = c - arr[b];
-			arr[b] = c;
-			Change_Number(1, 1, N, b, differ);
+			// arr[b] = c;
+			Update(1, 1, N, b, c);
 		}
 		else if (a == 2) {
-			// b번째 수부터 c번째 수까지의 합을 구하여 출력
+			// b번째 수부터 c번째 수까지의 합
 			cout << Sum(1, 1, N, b, c) << "\n";
 		}
 	}
