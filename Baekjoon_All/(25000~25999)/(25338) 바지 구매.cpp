@@ -14,7 +14,7 @@ using namespace std;
 
 int main() {
 	FASTIO;
-	double a, b, c, d;
+	int a, b, c, d;
 	int N;
 	cin >> a >> b >> c >> d;
 	cin >> N;
@@ -23,15 +23,7 @@ int main() {
 	FOR(i, 1, N) {
 		int u, v;
 		cin >> u >> v;
-		double left = b - sqrt((d - c) / a);
-		double right = b + sqrt((d - c) / a);
-		if (ceil(left) <= v && v <= floor(right)) {
-			int height = a * (v - b) * (v - b) + c;
-			cnt += (height == u);
-		}
-		else {
-			cnt += (d == u);
-		}
+		cnt += (a * (v - b) * (v - b) + c == u);
 	}
 	cout << cnt;
 
