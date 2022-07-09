@@ -16,29 +16,28 @@ int main() {
 	FASTIO;
 	int N;
 	cin >> N;
-	vector<vector<int>> Map(N + 1, vector<int>(N + 1));
-	vector<vector<vector<int>>> dp(N + 1, vector<vector<int>>(N + 1, vector<int>(10001, 0)));
-	FOR(i, 1, N) {
-		FOR(j, 1, N) {
+	vector<vector<int>> Map(N, vector<int>(N));
+	vector<vector<int>> dp(N, vector<int>(N, 0));
+	FOR(i, 0, N - 1) {
+		FOR(j, 0, N - 1) {
 			cin >> Map[i][j];
-		}
-	}
-	FOR(i, 1, N) {
-		FOR(j, 1, N) {
-			int maxi = 0;
-			FOR(k, 1, 10000) {
-				dp[i][j][k] = max(dp[i - 1][j][k], dp[i][j - 1][k]);
-				if (k < Map[i][j]) {
-					maxi = max(maxi, dp[i][j][k]);
-				}
-			}
-			dp[i][j][Map[i][j]] = max(dp[i][j][Map[i][j]], maxi + 1);
 		}
 	}
 
 	int ans = 0;
-	FOR(i, 1, 10000) {
-		ans = max(ans, dp[N][N][i]);
+	FOR(i, 0, N - 1) {
+		FOR(j, 0, N - 1) {
+			int maxi = 0;
+			FOR(y, 0, i) {
+				FOR(x, 0, j) {
+					if (Map[y][x] < Map[i][j]) {
+						maxi = max(maxi, dp[y][x]);
+					}
+				}
+			}
+			dp[i][j] = maxi + 1;
+			ans = max(ans, dp[i][j]);
+		}
 	}
 	cout << ans;
 
