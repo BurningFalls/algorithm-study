@@ -1,34 +1,35 @@
-#include <iostream>
-#include <algorithm>
+#include <bits/stdc++.h>
 using namespace std;
 
+#define FASTIO cin.tie(0); cout.tie(0); ios_base::sync_with_stdio(0);
+#define FOR(i,a,b) for(int i=(a);i<=(b);i++)
+#define ROF(i,a,b) for(int i=(a);i>=(b);i--)
+#define ll long long int
+#define pii pair<int, int>
+#define PQ priority_queue
+#define LEN(v) (int)v.size()
+#define ALL(v) v.begin(),v.end()
+#define INF (int)2e9
+#define LINF (ll)1e18
+#define MOD 1000000000
+
 int main() {
+	FASTIO;
 	int N, K;
 	cin >> N >> K;
-	int** dp = new int* [N + 1];
-	for (int i = 0; i <= N; i++) {
-		dp[i] = new int[K + 1];
+	vector<vector<ll>> dp(K + 1, vector<ll>(N + 1));
+	FOR(i, 0, N) {
+		dp[1][i] = 1;
 	}
-	for (int i = 0; i <= N; i++) {
-		for (int j = 0; j <= K; j++) {
-			dp[i][j] = 0;
+	FOR(i, 1, K) {
+		dp[i][0] = 1;
+	}
+	FOR(i, 2, K) {
+		FOR(j, 1, N) {
+			dp[i][j] = (dp[i - 1][j] + dp[i][j - 1]) % MOD;
 		}
 	}
-	for (int i = 1; i <= K; i++) {
-		dp[0][i] = 1;
-	}
-	for (int i = 0; i <= N; i++) {
-		dp[i][1] = 1;
-	}
-	for (int i = 1; i <= N; i++) {
-		for (int j = 2; j <= K; j++) {
-			for (int k = 0; k <= i; k++) {
-				dp[i][j] = (dp[i][j] + dp[k][j - 1]) % 1000000000;
-			}
-		}
-	}
-	cout << dp[N][K] << endl;
-
+	cout << dp[K][N];
 
 	return 0;
 }
