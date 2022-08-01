@@ -1,0 +1,59 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+#define FASTIO cin.tie(0); cout.tie(0); ios_base::sync_with_stdio(0);
+#define FOR(i,a,b) for(int i=(a);i<=(b);i++)
+#define ROF(i,a,b) for(int i=(a);i>=(b);i--)
+#define ll long long int
+#define pii pair<int, int>
+#define PQ priority_queue
+#define LEN(v) (int)v.size()
+#define ALL(v) v.begin(),v.end()
+#define INF (int)2e9
+#define LINF (ll)1e18
+
+int main() {
+	FASTIO;
+	int T;
+	cin >> T;
+	while (T--) {
+		int N, M;
+		cin >> N >> M;
+		string a, b;
+		cin >> a >> b;
+		if (N < M) {
+			cout << "NO\n";
+			continue;
+		}
+		bool flag = true;
+		FOR(i, 1, M - 1) {
+			if (a[N - M + i] != b[i]) {
+				flag = false;
+				break;
+			}
+		}
+		if (!flag) {
+			cout << "NO\n";
+			continue;
+		}
+		if (a[N - M] == b[0]) {
+			cout << "YES\n";
+		}
+		else {
+			int zero = 0, one = 0;
+			FOR(i, 0, N - M - 1) {
+				zero += (a[i] == '0');
+				one += (a[i] == '1');
+			}
+			if (b[0] == '0') {
+				cout << (zero == 0 ? "NO" : "YES");
+			}
+			else if (b[0] == '1') {
+				cout << (one == 0 ? "NO" : "YES");
+			}
+			cout << "\n";
+		}
+	}
+
+	return 0;
+}
