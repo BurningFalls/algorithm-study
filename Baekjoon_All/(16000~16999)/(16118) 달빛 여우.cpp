@@ -6,7 +6,6 @@ using namespace std;
 #define ROF(i,a,b) for(int i=(a);i>=(b);i--)
 #define ll long long int
 #define pii pair<int, int>
-#define pll pair<ll, ll>
 #define PQ priority_queue
 #define LEN(v) (int)v.size()
 #define ALL(v) v.begin(),v.end()
@@ -14,79 +13,32 @@ using namespace std;
 #define LINF (ll)1e18
 #define MAX 4001
 
-struct NUM {
-	ll num;
-	int flag;
-
-	bool operator<(const NUM x) const {
-		if (num == x.num)
-			return flag < x.flag;
-		return num < x.num;
-	}
-	NUM operator+(const NUM x) const{
-		int tmp = flag + x.flag;
-		return { num + x.num + tmp / 2, tmp % 2 };
-	}
-};
-
-struct NODE {
-	NUM dist;
-	int node;
-	int idx;
-
-	bool operator<(const NODE x) const {
-		return x.dist < dist;
-	}
-};
-
 int N, M;
-vector<vector<pll>> Edge(MAX, vector<pll>());
-vector<NUM> dist1(MAX, { LINF, 0 });
-vector<vector<NUM>> dist2(MAX, vector<NUM>(2, { LINF, 0 }));
+vector<vector<pii>> Edge(MAX, vector<pii>());
+vector<vector<vector<int>>> dist(2, vector<vector<int>>(MAX, vector<int>(2, INF)));
 
-void DT1() {
-	PQ<NODE> pq;
-	dist1[1] = { 0, 0 };
-	pq.push({ {0, 0}, 1, 0 });
+void DT(int idx) {
+	PQ<pair<int, pii>> pq;
+	pq.push({ 0, {1, 0} });
+	dist[idx][1][0] = 0;
 	while (!pq.empty()) {
-		NUM dist = pq.top().dist;
-		int cur = pq.top().node;
+		int cost = -pq.top().first;
+		int cur = pq.top().second.first;
+		int cnt = pq.top().second.second;
 		pq.pop();
-		if (dist1[cur] < dist) continue;
+		if (dist[idx][cur][cnt] < cost) continue;
 		FOR(i, 0, LEN(Edge[cur]) - 1) {
 			int next = Edge[cur][i].first;
-			NUM ndist = { Edge[cur][i].second, 0 };
-			if (dist + ndist < dist1[next]) {
-				dist1[next] = dist + ndist;
-				pq.push({ dist1[next], next, 0 });
+			int ncost = Edge[cur][i].second;
+			int ncnt = cnt;
+			if (idx == 1) {
+				ncnt = (ncnt + 1) % 2;
+				if (cnt == 0) ncost /= 2;
+				else if (cnt == 1) ncost *= 2;
 			}
-		}
-	}
-}
-
-void DT2() {
-	PQ<NODE> pq;
-	dist2[1][0] = {0, 0};
-	pq.push({ {0, 0}, 1, 0 });
-	while (!pq.empty()) {
-		NUM dist = pq.top().dist;
-		int cur = pq.top().node;
-		int idx = pq.top().idx;
-		pq.pop();
-		if (dist2[cur][idx] < dist) continue;
-		FOR(i, 0, LEN(Edge[cur]) - 1) {
-			int next = Edge[cur][i].first;
-			NUM ndist = { Edge[cur][i].second, 0 };
-			int nidx = (idx + 1) % 2;
-			if (idx == 0) {
-				ndist = { ndist.num / 2, (int)(ndist.num % 2) };
-			}
-			else if (idx == 1) {
-				ndist = { ndist.num * 2, 0 };
-			}
-			if (dist + ndist < dist2[next][nidx]) {
-				dist2[next][nidx] = dist + ndist;
-				pq.push({ dist2[next][nidx], next, nidx});
+			if (dist[idx][next][ncnt] > cost + ncost) {
+				dist[idx][next][ncnt] = cost + ncost;
+				pq.push({ -dist[idx][next][ncnt], {next, ncnt} });
 			}
 		}
 	}
@@ -96,20 +48,18 @@ int main() {
 	FASTIO;
 	cin >> N >> M;
 	FOR(i, 1, M) {
-		int a, b; ll d;
+		int a, b, d;
 		cin >> a >> b >> d;
-		Edge[a].push_back({ b, d });
-		Edge[b].push_back({ a, d });
+		Edge[a].push_back({ b, 2 * d });
+		Edge[b].push_back({ a, 2 * d });
 	}
 
-	DT1();
-	DT2();
+	DT(0);
+	DT(1);
 
 	int ans = 0;
 	FOR(i, 1, N) {
-		NUM fox = dist1[i];
-		NUM wolf = (dist2[i][0] < dist2[i][1] ? dist2[i][0] : dist2[i][1]);
-		ans += (fox < wolf);
+		ans += (dist[0][i][0] < min(dist[1][i][0], dist[1][i][1]));
 	}
 	cout << ans;
 
