@@ -14,49 +14,36 @@ using namespace std;
 #define LINF (ll)1e18
 #define MAX 50001
 
+struct NODE {
+	int node;
+	ll cost;
+	ll prev;
+};
+
 int N, M;
 int S, E;
 vector<vector<pll>> Edge(MAX, vector<pll>());
 vector<ll> dist(MAX, LINF);
 
 bool compare(pll a, pll b) {
-	return a.second < b.second;
-}
-
-int Find(int cur, int prev) {
-	int ans = LEN(Edge[cur]);
-	int left = 0, right = LEN(Edge[cur]) - 1;
-	while (left <= right) {
-		int mid = (left + right) / 2;
-		if (Edge[cur][mid].second > prev) {
-			ans = min(ans, mid);
-			right = mid - 1;
-		}
-		else {
-			left = mid + 1;
-		}
-	}
-	return ans;
+	return a.second > b.second;
 }
 
 void DT() {
-	PQ<pair<ll, pll>> pq;
-	pq.push({ 0, {S, 0} });
+	queue<NODE> q;
+	q.push({ S, 0, 0 });
 	dist[S] = 0;
-	while (!pq.empty()) {
-		ll cost = -pq.top().first;
-		int cur = pq.top().second.first;
-		int prev = pq.top().second.second;
-		pq.pop();
-		if (dist[cur] < cost) continue;
-		int idx = Find(cur, prev);
-		FOR(i, idx, LEN(Edge[cur]) - 1) {
+	while (!q.empty()) {
+		int cur = q.front().node;
+		ll cost = q.front().cost;
+		ll prev = q.front().prev;
+		q.pop();
+		FOR(i, 0, LEN(Edge[cur]) - 1) {
 			int next = Edge[cur][i].first;
 			ll ncost = Edge[cur][i].second;
-			if (dist[next] > ncost + cost) {
-				dist[next] = ncost + cost;
-				pq.push({ -dist[next], {next, ncost} });
-			}
+			if (ncost <= prev) break;
+			dist[next] = min(dist[next], ncost + cost);
+			q.push({ next, ncost + cost, ncost });
 		}
 	}
 }
@@ -74,7 +61,6 @@ int main() {
 	FOR(i, 1, N) {
 		sort(ALL(Edge[i]), compare);
 	}
-
 	DT();
 
 	if (dist[E] == LINF) {
