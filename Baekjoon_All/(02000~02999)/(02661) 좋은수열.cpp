@@ -1,124 +1,47 @@
-#include <iostream>
-#include <string>
-#include <stack>
-#include <algorithm>
+#include <bits/stdc++.h>
 using namespace std;
 
-bool check(string s) {
-	reverse(s.begin(), s.end());
-	string str1, str2;
-	for (int i = 2; i <= s.size() / 2; i++) {
-		str1 = s.substr(0, i);
-		str2 = s.substr(i, i);
-		if (str1.compare(str2) == 0) {
-			return true;
-		}
-	}
-	return false;
-}
+#define FASTIO cin.tie(0); cout.tie(0); ios_base::sync_with_stdio(0);
+#define FOR(i,a,b) for(int i=(a);i<=(b);i++)
+#define ROF(i,a,b) for(int i=(a);i>=(b);i--)
+#define ll long long int
+#define pii pair<int, int>
+#define PQ priority_queue
+#define LEN(v) (int)v.size()
+#define ALL(v) v.begin(),v.end()
+#define INF (int)2e9
+#define LINF (ll)1e18
 
-string good_sequence(int n) {
-	stack<string> s;
-	s.push("3");
-	s.push("2");
-	s.push("1");
-	string current_node;
-	string next_node;
-	while (current_node.size() < n) {
-		current_node = s.top();
-		s.pop();
-		if (current_node.back() == '1') {
-			next_node = "3";
-			current_node += next_node;
-			if (check(current_node) == false) {
-				s.push(current_node);
-				current_node.pop_back();
-				next_node = "2";
-				current_node += next_node;
-				if (check(current_node) == false) {
-					s.push(current_node);
-				}
-				else {
-					current_node.pop_back();
-					current_node += "3";
-				}
-			}
-			else {
-				current_node.pop_back();
-				next_node = "2";
-				current_node += next_node;
-				if (check(current_node) == false) {
-					s.push(current_node);
-				}
-				else {
-					current_node.pop_back();
-				}
-			}
-		}
-		else if (current_node.back() == '2') {
-			next_node = "3";
-			current_node += next_node;
-			if (check(current_node) == false) {
-				s.push(current_node);
-				current_node.pop_back();
-				next_node = "1";
-				current_node += next_node;
-				if (check(current_node) == false) {
-					s.push(current_node);
-				}
-				else {
-					current_node.pop_back();
-					current_node += "3";
-				}
-			}
-			else {
-				current_node.pop_back();
-				next_node = "1";
-				current_node += next_node;
-				if (check(current_node) == false) {
-					s.push(current_node);
-				}
-				else {
-					current_node.pop_back();
-				}
-			}
-		}
-		else if (current_node.back() == '3') {
-			next_node = "2";
-			current_node += next_node;
-			if (check(current_node) == false) {
-				s.push(current_node);
-				current_node.pop_back();
-				next_node = "1";
-				current_node += next_node;
-				if (check(current_node) == false) {
-					s.push(current_node);
-				}
-				else {
-					current_node.pop_back();
-					current_node += "2";
-				}
-			}
-			else {
-				current_node.pop_back();
-				next_node = "1";
-				current_node += next_node;
-				if (check(current_node) == false) {
-					s.push(current_node);
-				}
-				else {
-					current_node.pop_back();
-				}
-			}
-		}
-	}
+int N;
+string ans = "";
 
-	return current_node;
+void Func() {
+	if (LEN(ans) == N) {
+		cout << ans;
+		exit(0);
+	}
+	FOR(i, 1, 3) {
+		ans.push_back(i + '0');
+		bool flag = false;
+		for (int len = 1; len * 2 <= LEN(ans); len++) {
+			string a = ans.substr(LEN(ans) - len * 2, len);
+			string b = ans.substr(LEN(ans) - len, len);
+			if (a == b) {
+				flag = true;
+				break;
+			}
+		}
+		if (!flag) {
+			Func();
+		}
+		ans.pop_back();
+	}
 }
 
 int main() {
-	int N;
+	FASTIO;
 	cin >> N;
-	cout << good_sequence(N) << endl;
+	Func();
+
 	return 0;
 }
