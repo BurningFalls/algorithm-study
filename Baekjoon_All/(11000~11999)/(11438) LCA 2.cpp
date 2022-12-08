@@ -1,72 +1,84 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-typedef long long int ll;
 #define FASTIO cin.tie(0); cout.tie(0); ios_base::sync_with_stdio(0);
 #define FOR(i,a,b) for(int i=(a);i<=(b);i++)
 #define ROF(i,a,b) for(int i=(a);i>=(b);i--)
+#define ll long long int
 #define pii pair<int, int>
+#define PQ priority_queue
+#define LEN(v) (int)v.size()
+#define ALL(v) v.begin(),v.end()
+#define INF (int)2e9
+#define LINF (ll)1e18
+#define MAX 100001
 
 int N;
-vector<int> edge[100001];
-int depth[100001];
-int Parent[100001][20];
-int max_level;
+int max_dep;
+vector<vector<int>> Edge(MAX, vector<int>());
+vector<vector<int>> Parent(MAX, vector<int>(18));
+vector<int> depth(MAX);
 
-void Find_Parent(int cur, int prev) {
-	depth[cur] = depth[prev] + 1;
-	Parent[cur][0] = prev;
-	FOR(i, 1, max_level) {
-		int tmp = Parent[cur][i - 1];
-		Parent[cur][i] = Parent[tmp][i - 1];
+void Travel(int node, int prev) {
+	depth[node] = depth[prev] + 1;
+	Parent[node][0] = prev;
+
+	FOR(i, 1, max_dep) {
+		Parent[node][i] = Parent[Parent[node][i - 1]][i - 1];
 	}
-	int len = edge[cur].size();
-	FOR(i, 0, len - 1) {
-		int next = edge[cur][i];
+
+	for (int next : Edge[node]) {
 		if (next == prev) continue;
-		Find_Parent(next, cur);
+		Travel(next, node);
 	}
+}
+
+int LCA(int x, int y) {
+	if (depth[x] < depth[y]) {
+		swap(x, y);
+	}
+
+	ROF(i, max_dep, 0) {
+		if (depth[Parent[x][i]] >= depth[y]) {
+			x = Parent[x][i];
+		}
+	}
+
+	if (x == y) {
+		return x;
+	}
+
+	ROF(i, max_dep, 0) {
+		if (Parent[x][i] != Parent[y][i]) {
+			x = Parent[x][i];
+			y = Parent[y][i];
+		}
+	}
+
+	return Parent[x][0];
 }
 
 int main() {
 	FASTIO;
 	cin >> N;
+	max_dep = (int)floor(log2(MAX));
 	FOR(i, 1, N - 1) {
-		int a, b;
-		cin >> a >> b;
-		edge[a].push_back(b);
-		edge[b].push_back(a);
+		int u, v;
+		cin >> u >> v;
+		Edge[u].push_back(v);
+		Edge[v].push_back(u);
 	}
+	
 	depth[0] = -1;
-	max_level = (int)floor(log2(100001));
-	Find_Parent(1, 0);
+	Travel(1, 0);
 
 	int M;
 	cin >> M;
 	FOR(i, 1, M) {
-		int a, b;
-		cin >> a >> b;
-		if (depth[a] != depth[b]) {
-			if (depth[a] > depth[b])
-				swap(a, b);
-			ROF(i, max_level, 0) {
-				if (depth[a] <= depth[Parent[b][i]])
-					b = Parent[b][i];
-			}
-		}
-		int lca = a;
-		if (a != b) {
-			ROF(i, max_level, 0) {
-				if (Parent[a][i] != Parent[b][i]) {
-					a = Parent[a][i];
-					b = Parent[b][i];
-				}
-				lca = Parent[a][i];
-			}
-		}
-		cout << lca << "\n";
+		int x, y;
+		cin >> x >> y;
+		cout << LCA(x, y) << "\n";
 	}
-
 
 	return 0;
 }
