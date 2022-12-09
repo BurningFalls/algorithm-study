@@ -1,75 +1,86 @@
-#include <iostream>
-#include <vector>
+#include <bits/stdc++.h>
 using namespace std;
 
-// first: node, second: distance
-vector<pair<int, int>> v[50001];
-// first: depth, second: parent node
-pair<int, int> inf[50001];
-int visited[50001] = { 0, };
-int dist[50001] = { 0, };
+#define FASTIO cin.tie(0); cout.tie(0); ios_base::sync_with_stdio(0);
+#define FOR(i,a,b) for(int i=(a);i<=(b);i++)
+#define ROF(i,a,b) for(int i=(a);i>=(b);i--)
+#define ll long long int
+#define pii pair<int, int>
+#define pll pair<ll, ll>
+#define PQ priority_queue
+#define LEN(v) (int)v.size()
+#define ALL(v) v.begin(),v.end()
+#define INF (int)2e9
+#define LINF (ll)1e18
+#define MAX 40001
 
-void Tree(int node) {
-	int len;
-	int new_node;
-	bool flag = false;
-	int d;
-	len = v[node].size();
-	for (int i = 0; i < len; i++) {
-		new_node = v[node][i].first;
-		d = v[node][i].second;
-		if (visited[new_node]) continue;
-		flag = true;
-		visited[new_node] = visited[node] + 1;
-		dist[new_node] = dist[node] + d;
-		inf[new_node] = make_pair(visited[new_node], node);
-		Tree(new_node);
+int N;
+int max_dep;
+vector<vector<pll>> Edge(MAX, vector<pll>());
+vector<vector<int>> Parent(MAX, vector<int>(17));
+vector<int> depth(MAX);
+vector<ll> dist(MAX);
+
+void DFS(int node, int prev) {
+	depth[node] = depth[prev] + 1;
+	Parent[node][0] = prev;
+
+	FOR(i, 1, max_dep) {
+		Parent[node][i] = Parent[Parent[node][i - 1]][i - 1];
 	}
-	if (!flag)
-		return;
+
+	FOR(i, 0, LEN(Edge[node]) - 1) {
+		int next = Edge[node][i].first;
+		ll cost = Edge[node][i].second;
+		if (next == prev) continue;
+		dist[next] = dist[node] + cost;
+		DFS(next, node);
+	}
 }
 
-int Find(int node1, int node2) {
-	int dep1, dep2;
-	dep1 = inf[node1].first;
-	dep2 = inf[node2].first;
-	if (dep1 > dep2) {
-		for (int i = 0; i < dep1 - dep2; i++)
-			node1 = inf[node1].second;
-	}
-	else if (dep1 < dep2) {
-		for (int i = 0; i < dep2 - dep1; i++)
-			node2 = inf[node2].second;
-	}
-	while (true) {
-		if (node1 == node2) {
-			return node1;
+int LCA(int x, int y) {
+	if (depth[x] < depth[y]) swap(x, y);
+
+	ROF(i, max_dep, 0) {
+		if (depth[Parent[x][i]] >= depth[y]) {
+			x = Parent[x][i];
 		}
-		node1 = inf[node1].second;
-		node2 = inf[node2].second;
 	}
+
+	if (x == y) return x;
+
+	ROF(i, max_dep, 0) {
+		if (Parent[x][i] != Parent[y][i]) {
+			x = Parent[x][i];
+			y = Parent[y][i];
+		}
+	}
+
+	return Parent[x][0];
 }
 
 int main() {
-	int N, M;
-	int a, b, c;
-	int same_node;
+	FASTIO;
 	cin >> N;
-	for (int i = 0; i < N - 1; i++) {
+	max_dep = (int)floor(log2(MAX));
+	FOR(i, 1, N - 1) {
+		int a, b; ll c;
 		cin >> a >> b >> c;
-		v[a].push_back(make_pair(b, c));
-		v[b].push_back(make_pair(a, c));
+		Edge[a].push_back({ b, c });
+		Edge[b].push_back({ a, c });
 	}
+
+	depth[0] = -1;
+	dist[1] = 0;
+	DFS(1, 0);
+
+	int M;
 	cin >> M;
-
-	visited[1] = 1;
-	inf[1] = make_pair(1, 0);
-	Tree(1);
-
-	for (int i = 0; i < M; i++) {
-		cin >> a >> b;
-		same_node = Find(a, b);
-		cout << dist[a] + dist[b] - 2 * dist[same_node] << "\n";
+	FOR(i, 1, M) {
+		int x, y;
+		cin >> x >> y;
+		int lca = LCA(x, y);
+		cout << dist[x] + dist[y] - 2 * dist[lca] << "\n";
 	}
 
 	return 0;
