@@ -1,101 +1,99 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-typedef long long int ll;
 #define FASTIO cin.tie(0); cout.tie(0); ios_base::sync_with_stdio(0);
 #define FOR(i,a,b) for(int i=(a);i<=(b);i++)
 #define ROF(i,a,b) for(int i=(a);i>=(b);i--)
+#define ll long long int
 #define pii pair<int, int>
+#define PQ priority_queue
+#define LEN(v) (int)v.size()
+#define ALL(v) v.begin(),v.end()
+#define INF (int)2e9
+#define LINF (ll)1e18
 #define MAX 100001
-#define INF 987654321
 
 int N;
-vector<pii> edge[MAX];
-int depth[MAX];
-int Parent[MAX][20];
-int maxDP[MAX][20];
-int minDP[MAX][20];
-int max_level;
+int max_dep;
+vector<vector<pii>> Edge(MAX, vector<pii>());
+vector<vector<int>> Parent(MAX, vector<int>(18));
+vector<int> depth(MAX);
+vector<vector<int>> min_dist(MAX, vector<int>(18));
+vector<vector<int>> max_dist(MAX, vector<int>(18));
+int mini, maxi;
 
-void Find_Parent(int cur, int prev, int val) {
-	depth[cur] = depth[prev] + 1;
-	Parent[cur][0] = prev;
-	minDP[cur][0] = val;
-	maxDP[cur][0] = val;
-	FOR(i, 1, max_level) {
-		int tmp = Parent[cur][i - 1];
-		Parent[cur][i] = Parent[tmp][i - 1];
+void DFS(int node, int prev, int dist) {
+	depth[node] = depth[prev] + 1;
+	Parent[node][0] = prev;
+	min_dist[node][0] = dist;
+	max_dist[node][0] = dist;
+
+	FOR(i, 1, max_dep) {
+		Parent[node][i] = Parent[Parent[node][i - 1]][i - 1];
+		min_dist[node][i] = min(min_dist[node][i - 1], min_dist[Parent[node][i - 1]][i - 1]);
+		max_dist[node][i] = max(max_dist[node][i - 1], max_dist[Parent[node][i - 1]][i - 1]);
 	}
-	int len = edge[cur].size();
-	FOR(i, 0, len - 1) {
-		pii next = edge[cur][i];
-		if (next.first == prev) continue;
-		Find_Parent(next.first, cur, next.second);
+
+	FOR(i, 0, LEN(Edge[node]) - 1) {
+		int next = Edge[node][i].first;
+		int cost = Edge[node][i].second;
+		if (next == prev) continue;
+		DFS(next, node, cost);
 	}
 }
 
-void Make_DP() {
-	FOR(i, 1, max_level) {
-		FOR(cur, 1, N) {
-			int tmp = Parent[cur][i - 1];
-			minDP[cur][i] = min(minDP[cur][i - 1], minDP[tmp][i - 1]);
-			maxDP[cur][i] = max(maxDP[cur][i - 1], maxDP[tmp][i - 1]);
+void LCA(int x, int y) {
+	if (depth[x] < depth[y]) swap(x, y);
+
+	ROF(i, max_dep, 0) {
+		if (depth[Parent[x][i]] >= depth[y]) {
+			mini = min(mini, min_dist[x][i]);
+			maxi = max(maxi, max_dist[x][i]);
+			x = Parent[x][i];
 		}
+	}
+
+	if (x == y) return;
+
+	ROF(i, max_dep, 0) {
+		if (Parent[x][i] != Parent[y][i]) {
+			mini = min({ mini, min_dist[x][i], min_dist[y][i] });
+			maxi = max({ maxi, max_dist[x][i], max_dist[y][i] });
+			x = Parent[x][i];
+			y = Parent[y][i];
+		}
+	}
+
+	if (x != Parent[x][0]) {
+		mini = min({ mini, min_dist[x][0], min_dist[y][0] });
+		maxi = max({ maxi, max_dist[x][0], max_dist[y][0] });
 	}
 }
 
 int main() {
 	FASTIO;
 	cin >> N;
+	max_dep = (int)floor(log2(MAX));
 	FOR(i, 1, N - 1) {
 		int A, B, C;
 		cin >> A >> B >> C;
-		edge[A].push_back({ B, C });
-		edge[B].push_back({ A, C });
+		Edge[A].push_back({ B, C });
+		Edge[B].push_back({ A, C });
 	}
 
-	max_level = (int)floor(log2(MAX));
 	depth[0] = -1;
-	Find_Parent(1, 0, 0);
-	Make_DP();
+	DFS(1, 0, 0);
 
 	int K;
 	cin >> K;
 	FOR(i, 1, K) {
 		int D, E;
-		int mini = INF;
-		int maxi = -1;
 		cin >> D >> E;
-		if (depth[D] != depth[E]) {
-			if (depth[D] > depth[E])
-				swap(D, E);
-			ROF(i, max_level, 0) {
-				if (depth[D] <= depth[Parent[E][i]]) {
-					mini = min(mini, minDP[E][i]);
-					maxi = max(maxi, maxDP[E][i]);
-					E = Parent[E][i];
-				}
-			}
-		}
-		int lca = D;
-		if (D != E) {
-			ROF(i, max_level, 0) {
-				if (Parent[D][i] != Parent[E][i]) {
-					mini = min({ mini, minDP[D][i], minDP[E][i] });
-					maxi = max({ maxi, maxDP[D][i], maxDP[E][i] });
-					D = Parent[D][i];
-					E = Parent[E][i];
-				}
-				lca = Parent[D][i];
-			}
-		}
-		if (D != lca) {
-			mini = min({ mini, minDP[D][0], minDP[E][0] });
-			maxi = max({ maxi, maxDP[D][0], maxDP[E][0] });
-		}
+		mini = INF;
+		maxi = -1;
+		LCA(D, E);
 		cout << mini << " " << maxi << "\n";
 	}
-
 
 	return 0;
 }
