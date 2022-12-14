@@ -1,33 +1,16 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-typedef long long int ll;
 #define FASTIO cin.tie(0); cout.tie(0); ios_base::sync_with_stdio(0);
 #define FOR(i,a,b) for(int i=(a);i<=(b);i++)
 #define ROF(i,a,b) for(int i=(a);i>=(b);i--)
-
-int num[100001];
-bool visited[100001];
-bool impossible[100001];
-int cnt;
-
-void DFS(int node) {
-	visited[node] = 1;
-	int new_node = num[node];
-	if (!visited[new_node])
-		DFS(new_node);
-	else {
-		if (!impossible[new_node]) {
-			int idx = new_node;
-			while (idx != node) {
-				cnt++;
-				idx = num[idx];
-			}
-			cnt++;
-		}
-	}
-	impossible[node] = 1;
-}
+#define ll long long int
+#define pii pair<int, int>
+#define PQ priority_queue
+#define LEN(v) (int)v.size()
+#define ALL(v) v.begin(),v.end()
+#define INF (int)2e9
+#define LINF (ll)1e18
 
 int main() {
 	FASTIO;
@@ -35,19 +18,31 @@ int main() {
 	cin >> T;
 	while (T--) {
 		int N;
-		cnt = 0;
 		cin >> N;
+		vector<int> num(N + 1);
+		vector<int> indegree(N + 1, 0);
 		FOR(i, 1, N) {
-			visited[i] = 0;
-			impossible[i] = 0;
-		}
-		FOR(i, 1, N)
 			cin >> num[i];
-		FOR(i, 1, N) {
-			if (visited[i]) continue;
-			DFS(i);
+			indegree[num[i]]++;
 		}
-		cout << N - cnt << "\n";
+		queue<int> q;
+		FOR(i, 1, N) {
+			if (indegree[i] == 0) {
+				q.push(i);
+			}
+		}
+		int cnt = 0;
+		while (!q.empty()) {
+			int node = q.front();
+			q.pop();
+			cnt++;
+			int next = num[node];
+			indegree[next]--;
+			if (indegree[next] == 0) {
+				q.push(next);
+			}
+		}
+		cout << cnt << "\n";
 	}
 
 	return 0;
