@@ -23,24 +23,15 @@ int main() {
 		diff[i] = ((b + 25) - a) % 26;
 	}
 	int cut = LEN(A);
+	string s = "";
 	FOR(i, 1, LEN(A) / 2) {
+		s += diff[i - 1];
 		if (LEN(A) % i != 0) continue;
-		string s = "";
-		string tmp = "";
 		bool flag = true;
-		FOR(j, 0, LEN(A) - 1) {
-			tmp += diff[j] + 'A';
-			if ((j + 1) % i == 0) {
-				if (s.empty()) {
-					s = tmp;
-				}
-				else {
-					if (s != tmp) {
-						flag = false;
-						break;
-					}
-				}
-				tmp = "";
+		FOR(j, i, LEN(A) - 1) {
+			if (s[j % i] != diff[j]) {
+				flag = false;
+				break;
 			}
 		}
 		if (flag) {
@@ -48,7 +39,6 @@ int main() {
 			break;
 		}
 	}
-
 	FOR(i, 0, cut - 1) {
 		char x = diff[i] + 'A';
 		cout << x;
