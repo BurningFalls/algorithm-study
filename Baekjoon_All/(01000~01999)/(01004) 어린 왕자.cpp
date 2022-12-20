@@ -1,35 +1,33 @@
-#include <iostream>
-#include <utility>
-#include <math.h>
+#include <bits/stdc++.h>
 using namespace std;
 
+#define FASTIO cin.tie(0); cout.tie(0); ios_base::sync_with_stdio(0);
+#define FOR(i,a,b) for(int i=(a);i<=(b);i++)
+#define ROF(i,a,b) for(int i=(a);i>=(b);i--)
+#define ll long long int
+#define pii pair<int, int>
+#define PQ priority_queue
+#define LEN(v) (int)v.size()
+#define ALL(v) v.begin(),v.end()
+#define INF (int)2e9
+#define LINF (ll)1e18
+
 int main() {
+	FASTIO;
 	int T;
-	int N;
-	int x, y, z, w;
-	pair<int, int> start;
-	pair<int, int> end;
-	int arr[51][3];
-	double dif_fs, dif_fe;
-	int cnt;
 	cin >> T;
-	for (int a = 0; a < T; a++) {
-		cnt = 0;
-		cin >> x >> y >> z >> w;
-		start = make_pair(x, y);
-		end = make_pair(z, w);
+	while (T--) {
+		int x1, y1, x2, y2;
+		cin >> x1 >> y1 >> x2 >> y2;
+		int N;
 		cin >> N;
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < 3; j++) {
-				cin >> arr[i][j];
-			}
-		}
-		for (int i = 0; i < N; i++) {
-			dif_fs = sqrt(pow(start.first - arr[i][0], 2) + pow(start.second - arr[i][1], 2));
-			dif_fe = sqrt(pow(end.first - arr[i][0], 2) + pow(end.second - arr[i][1], 2));
-			if ((dif_fs < arr[i][2] && dif_fe > arr[i][2]) || (dif_fs > arr[i][2] && dif_fe < arr[i][2])) {
-				cnt++;
-			}
+		int cnt = 0;
+		FOR(i, 1, N) {
+			int cx, cy, r;
+			cin >> cx >> cy >> r;
+			bool f1 = (cx - x1) * (cx - x1) + (cy - y1) * (cy - y1) <= r * r;
+			bool f2 = (cx - x2) * (cx - x2) + (cy - y2) * (cy - y2) <= r * r;
+			cnt += (f1 ^ f2);
 		}
 		cout << cnt << "\n";
 	}
