@@ -1,65 +1,38 @@
-#include <iostream>
-#include <algorithm>
+﻿#include <bits/stdc++.h>
 using namespace std;
 
+#define FASTIO cin.tie(0); cout.tie(0); ios_base::sync_with_stdio(0);
+#define FOR(i,a,b) for(int i=(a);i<=(b);i++)
+#define ROF(i,a,b) for(int i=(a);i>=(b);i--)
+#define ll long long int
+#define pii pair<int, int>
+#define PQ priority_queue
+#define LEN(v) (int)v.size()
+#define ALL(v) v.begin(),v.end()
+#define INF (int)2e9
+#define LINF (ll)1e18
+
 int main() {
-	int n, m;
-	cin >> n >> m;
-	char** arr = new char* [n + 1];
-	int** dp = new int* [n + 1];
-	int maximum = 0;
-
-	for (int i = 0; i <= n; i++) {
-		arr[i] = new char[m + 1];
-		dp[i] = new int[m + 1];
-	}
-	for (int i = 1; i <= n; i++) {
-		for (int j = 1; j <= m; j++) {
-			cin >> arr[i][j];
-		}
-	}
-	for (int i = 1; i <= m; i++) {
-		if (arr[1][i] == '1') {
-			dp[1][i] = 1;
-		}
-		else if (arr[1][i] == '0') {
-			dp[1][i] = 0;
-		}
-	}
-	for (int i = 2; i <= n; i++) {
-		if (arr[i][1] == '1') {
-			dp[i][1] = 1;
-		}
-		else if (arr[i][1] == '0') {
-			dp[i][1] = 0;
+	FASTIO;
+	int N, M;
+	cin >> N >> M;
+	vector<vector<char>> Map(N + 1, vector<char>(M + 1));
+	vector<vector<int>> dp(N + 1, vector<int>(M + 1, 0));
+	FOR(i, 1, N) {
+		FOR(j, 1, M) {
+			cin >> Map[i][j];
 		}
 	}
 
-	for (int i = 2; i <= n; i++) {
-		for (int j = 2; j <= m; j++) {
-			if (arr[i][j] == '1') {
-				if (dp[i - 1][j - 1] <= dp[i - 1][j] && dp[i - 1][j - 1] <= dp[i][j - 1]) {
-					dp[i][j] = dp[i - 1][j - 1] + 1;
-				}
-				else {
-					dp[i][j] = min(dp[i - 1][j], dp[i][j - 1]) + 1;
-				}
-			}
-			else if (arr[i][j] == '0') {
-				dp[i][j] = 0;
-			}
+	int maxi = 0;
+	FOR(i, 1, N) {
+		FOR(j, 1, M) {
+			if (Map[i][j] == '0') continue;
+			dp[i][j] = min({ dp[i - 1][j - 1], dp[i - 1][j], dp[i][j - 1] }) + 1;
+			maxi = max(maxi, dp[i][j]);
 		}
 	}
-
-	for (int i = 1; i <= n; i++) {
-		for (int j = 1; j <= m; j++) {
-			if (dp[i][j] > maximum) {
-				maximum = dp[i][j];
-			}
-		}
-	}
-	cout << maximum * maximum << endl;
-
+	cout << maxi * maxi;
 
 	return 0;
 }
