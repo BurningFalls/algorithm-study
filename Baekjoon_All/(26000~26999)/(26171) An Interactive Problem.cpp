@@ -14,34 +14,27 @@ using namespace std;
 
 int main() {
 	FASTIO;
-	int col = 1, row = 1;
-	int mrow = 0;
-	int maxi = 0;
-	while (true) {
-		string input;
-		cout << "? " << col << " " << row << endl;
-		cin >> input;
-		if (input == "ArrayIndexOutOfBoundsException") {
-			if (mrow != 0) {
-				break;
-			}
-			mrow = row - 1;
-			col++;
-			row = 1;
+	int n = 1;
+	while (n <= 100) {
+		cout << "? " << 1 << " " << n << endl;
+		string s;
+		cin >> s;
+		if (s == "ArrayIndexOutOfBoundsException") {
+			break;
 		}
-		else {
-			maxi = max(maxi, stoi(input));
-			if (row == mrow) {
-				col++;
-				row = 1;
-			}
-			else {
-				row++;
-			}
+		n++;
+	}
+	n -= 1;
+	int maxi = 0;
+	FOR(i, 1, n) {
+		FOR(j, 1, n) {
+			cout << "? " << i << " " << j << endl;
+			int x;
+			cin >> x;
+			maxi = max(maxi, x);
 		}
 	}
-
-	cout << "! " << maxi;
+	cout << "! " << maxi << endl;
 
 	return 0;
 }
