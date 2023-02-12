@@ -1,39 +1,51 @@
-#include <iostream>
-#include <math.h>
+#include <bits/stdc++.h>
 using namespace std;
 
-bool Check(int n) {
-	for (int i = 2; i <= sqrt(n); i++) {
-		if (n % i == 0)
-			return false;
+#define FASTIO cin.tie(0); cout.tie(0); ios_base::sync_with_stdio(0);
+#define FOR(i,a,b) for(int i=(a);i<=(b);i++)
+#define ROF(i,a,b) for(int i=(a);i>=(b);i--)
+#define ll long long int
+#define pii pair<int, int>
+#define PQ priority_queue
+#define LEN(v) (int)v.size()
+#define ALL(v) v.begin(),v.end()
+#define INF (int)2e9
+#define LINF (ll)1e18
+
+vector<int> is_prime(1000001, 1);
+vector<int> primes;
+
+void Find_Prime() {
+	FOR(i, 2, 1000) {
+		if (!is_prime[i]) continue;
+		if (i != 2) {
+			primes.push_back(i);
+		}
+		for (int j = i * i; j <= 1000000; j += i) {
+			is_prime[j] = 0;
+		}
 	}
-	return true;
+	FOR(i, 1001, 1000000) {
+		if (!is_prime[i]) continue;
+		primes.push_back(i);
+	}
 }
 
 int main() {
-	cin.tie(NULL);
-	std::ios_base::sync_with_stdio(false);
-	int N;
-	int flag;
-	bool prime_flag[1000001] = { 0, };
-	for (int i = 3; i <= 999999; i += 2) {
-		if (Check(i))
-			prime_flag[i] = 1;
-	}
+	FASTIO;
+	Find_Prime();
 	while (true) {
+		int N;
 		cin >> N;
-		flag = false;
-		if (N == 0)
+		if (N == 0) break;
+		FOR(i, 0, LEN(primes) - 1) {
+			int a = primes[i];
+			int b = N - primes[i];
+			if (a > b) break;
+			if (!is_prime[b]) continue;
+			cout << N << " = ";
+			cout << a << " + " << b << "\n";
 			break;
-		for (int i = 3; i <= N / 2; i += 2) {
-			if (prime_flag[i] && prime_flag[N - i]) {
-				cout << N << " = " << i << " + " << N - i << "\n";
-				flag = true;
-				break;
-			}
-		}
-		if (flag == false) {
-			cout << "Goldbach's conjecture is wrong.\n";
 		}
 	}
 
